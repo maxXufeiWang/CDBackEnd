@@ -24,7 +24,7 @@ app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
 
 Session(app)
 
-db = pymysql.connect(host="localhost", user="Max", db="MaxWang", password="941128", port=3500)
+db = pymysql.connect(host="10.0.4.7", user="root", db="max", password="Xufeiwangmax1128", port=3306)
 cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
 
