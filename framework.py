@@ -24,7 +24,7 @@ app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
 
 Session(app)
 
-db = pymysql.connect(host="localhost", user="root", db="maxWang", password="sinocbd", port=3306)
+db = pymysql.connect(host="localhost", user="Max", db="MaxWang", password="941128", port=3500)
 cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
 
@@ -99,5 +99,5 @@ def upload():
     return jsonify(engine.process_upload(data))
 
 if __name__ ==  '__main__':
-    engine = algEngine(".\\backend\\references")
+    engine = algEngine(".\\references")
     app.run(host='0.0.0.0',port=8001)
