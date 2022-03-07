@@ -8,6 +8,8 @@ from werkzeug.utils import secure_filename
 import pymysql
 import redis
 
+engine = algEngine(".\\references")
+
 app = Flask(__name__)
 
 base_dir  = os.path.abspath(os.path.dirname(__file__))
@@ -24,7 +26,7 @@ app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
 
 Session(app)
 
-db = pymysql.connect(host="localhost", user="Max", db="MaxWang", password="941128", port=3500)
+db = pymysql.connect(host="10.0.4.7", user="root", db="max", password="Xufeiwangmax1128", port=3306)
 cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
 
@@ -32,11 +34,14 @@ file_dir = './upload'
 
 @app.route('/', methods=['GET'])
 def hello_world(): 
+    if request.method=='CONNECT':
+        return "fuck you"
     return "Dev Depolyment success."
 
 @app.route('/files_upload', methods=['POST'])
 def upload_zip():  
-
+    if request.method=='CONNECT':
+        return "fuck you"
     if request.method=='POST':
         file = request.files.get('files')
 
@@ -93,11 +98,10 @@ def get_files_rec(host_path, nameLst):
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
+    if request.method=='CONNECT':
+        return "fuck you"
     if request.method == "POST":
         data = request.get_data()
     
     return jsonify(engine.process_upload(data))
 
-if __name__ ==  '__main__':
-    engine = algEngine(".\\references")
-    app.run(host='0.0.0.0',port=8001)
