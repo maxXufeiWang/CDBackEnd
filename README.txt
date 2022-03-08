@@ -25,8 +25,6 @@ Dependencies：
 		app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
 		db = pymysql.connect(host="localhost", user="root", db="maxWang", password="sinocbd", port=3306)
 
-	You can run the script without the fore-mentioned DBs. Just make sure that you are not using the zip 	file 	upload API(single file upload would be the only API you can use in this case).
-
 	# algEngine.py
 	## no new dependency
 
@@ -37,12 +35,7 @@ Hot to run:
 	1. Make sure you installed all needed dependent libraries.
 
 	2. Open a console and in the root directory("FYP"), type this:
-		 python .\backend\framework.py
+		 python server.py
 
-	then, the output would have something like the following:
-		* Running on http://192.168.1.231:8001/ (Press CTRL+C to quit)
+	then, the program should be running on http://localhost:8001/ 
 	Remember the IP and port.
-
-	Now, it is up and running.
-
-
