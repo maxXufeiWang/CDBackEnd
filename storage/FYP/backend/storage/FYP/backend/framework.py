@@ -1,3 +1,4 @@
+from tokenize import Name
 from algEngine import *
 from flask import Flask, render_template, jsonify, session, request
 from flask_session import Session
@@ -7,30 +8,24 @@ import os
 from werkzeug.utils import secure_filename
 import pymysql
 import redis
-import datetime
-import time
-
 
 app = Flask(__name__)
 
 base_dir  = os.path.abspath(os.path.dirname(__file__))
 app.config['UPLOAD_FOLDER'] = base_dir
 
-ALLOWED_EXTENSIONS = set(['zip'])#允许文件上传的格式
+ALLOWED_EXTENSIONS = set(['zip'])
 
-def allowed_file(filename): # 判断上传文件的格式
+def allowed_file(filename): 
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
 
-# session存储到redis注册到flak中
 Session(app)
 
-# 建立pymysql连接
 db = pymysql.connect(host="localhost", user="root", db="maxWang", password="sinocbd", port=3306)
-# 使用cursor()方法创建一个游标对象
 cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
 
@@ -41,8 +36,6 @@ def upload_zip():
     if request.method=='POST':
         file = request.files.get('files')
 
-        print(file.filename)
-        print(file.filename.rsplit('.')[-1])
         if file.filename.rsplit('.')[-1] not in ['zip',]:
             path=os.path.join(base_dir,file.filename)
             with open(path,'w')as f:
@@ -56,12 +49,9 @@ def upload_zip():
                         count+=1
                     else:
                         break
-            print(count)
             sql='select id from user where user.user="'+session.get('user')+'"'
             cursor.execute(sql)
             data = cursor.fetchall()
-            print(data[0])
-            ctime=datetime.datetime.now()
             cursor.execute("INSERT into detail(user_id,lens) VALUES('"+str(data[0]['id'])+"','"+str(count)+"')")
 
             db.commit()
@@ -69,33 +59,33 @@ def upload_zip():
         # 处理压缩文件
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  # 压缩文件保存在项目路径下
-            local_dir = os.path.join(base_dir, '11')  # 新创建一个路径，用来放压缩后的文件
-            hh = os.path.join(base_dir, filename)  # 这个是找到压缩文件路径-------C:/Code/haha.zip
-            print(hh)
-            print(local_dir)
-            shutil.unpack_archive(filename=hh, extract_dir=local_dir)# 把文件保存在刚刚设定好的路径下
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  # save zip
+            local_dir = os.path.join(base_dir, 'storage')  # create path for zip file
+            hh = os.path.join(base_dir, filename)  # path for zip file
+            shutil.unpack_archive(filename=hh, extract_dir=local_dir)# unzip and save
 
-            os.remove(hh) # 最后把压缩文件删除
+            os.remove(hh) # delete zip file
 
             filename = filename.split('.')[0]
-            print(filename)  # 此处为验证信息
-            host_path = os.path.join(local_dir, filename+'.py')  # host.txt的路径
-            print(host_path)
-            with open(host_path, 'r',encoding='utf-8') as f:  # 把host文件打开
-                key, values = [i.replace('\n', '').split(',') for i in f.readlines()]  # 列表推倒式，生成一个由键组成的列表，一个由值组成的列表
-                hostvalue = dict(zip(key, values))  # 把两个列表组成字典
-                print(hostvalue)
-            ip = hostvalue['host_os_ip']  # 开始读取里面的信息
-            systemname = hostvalue['host_database_bussines']
-            databasename = hostvalue['host_database_instance']
-            uploadtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(ip, systemname, databasename, uploadtime)
+            host_path = os.path.join(local_dir, filename)
 
+            nameLst = engine.get_file_name(host_path)
 
-    return render_template('upload.html')
+            fileLst = get_files_rec(host_path, nameLst)
+            
+    return jsonify(engine.process_upload_zip(fileLst))
 
+def get_files_rec(host_path, nameLst):
+    dirLst = []
 
+    for name in nameLst:
+        new_path = os.path.join(host_path, name)
+        if(os.path.isdir(new_path)):
+            dirLst = dirLst + get_files_rec(new_path, engine.get_file_name(new_path))
+        else:
+            dirLst.append(new_path)
+
+    return dirLst
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
