@@ -1,0 +1,4 @@
+*.pyc
+
+storage
+__pycache__

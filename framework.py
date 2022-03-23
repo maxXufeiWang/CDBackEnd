@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 
 engine = algEngine(".\\references")
 
+engine = algEngine(".\\references")
+
 app = Flask(__name__)
 Session(app)
 
