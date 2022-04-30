@@ -118,7 +118,6 @@ class algEngine(object):
 
     # Build return body
     def prepare_ret(self, chances):
-        print(type(chances))
         chances = sorted(chances, key=lambda e: e.__getitem__('chance'), reverse= True)
         if(len(chances) == 0):
             retBody = {"code": 404, "msg": "Sorry, no match found."}
