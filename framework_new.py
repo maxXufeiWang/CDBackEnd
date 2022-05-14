@@ -31,6 +31,8 @@ def upload():
         data = handle(request.files.get('userUpload'), request.form.to_dict())
 
         if data['type'] == 'string':
+            if "https://github.com" not in data['content']:
+                return "Failed. It is not a github repo address."
             lst = process(data)
             deleteTempFiles(data['sessionID'])
 
