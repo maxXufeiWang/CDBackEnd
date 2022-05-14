@@ -21,11 +21,12 @@ def upload():
         return "Stop"
     if request.method == "POST":
         data = request.get_data()
-        filename = data.decode().split("filename=")[1].split("\"")[1]
-        ext = filename.split(".")[1]
+        print(data)
+        #filename = data.decode().split("filename=")[1].split("\"")[1]
+        #ext = filename.split(".")[1]
         
-        if ext != "txt":
-            return jsonify({"code": 123, "msg": "Wrong file type"})
+        #if ext != "txt":
+            #return jsonify({"code": 123, "msg": "Wrong file type"})
 
     
     return jsonify(engine.process_upload(data))
