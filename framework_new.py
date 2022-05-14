@@ -81,8 +81,6 @@ def upload():
 
     return jsonify(engine.process_upload(lst))
 
-    engine.process_upload(lst)
-    return "success"
 
 def save(file, sessionID):
     if file:
