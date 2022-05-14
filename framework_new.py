@@ -21,7 +21,7 @@ app.config['UPLOAD_FOLDER'] = base_dir
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Deployed.'
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
@@ -32,7 +32,8 @@ def upload():
 
         if data['type'] == 'string':
             if "https://github.com" not in data['content']:
-                return "Failed. It is not a github repo address."
+                return jsonify({"code": 100, "msg": "Failed. It is not a github repo address."})
+
             lst = process(data)
             deleteTempFiles(data['sessionID'])
 
@@ -60,7 +61,7 @@ def upload():
 
                 print(len(lst))
             else:
-                return "Failed. SessionID has been token by earlier access. "
+                return jsonify({"code": 202, "msg": "Failed. SessionID has been token by earlier access. "})
 
         elif data['type'] == 'text/plain':
             print("=============================123123")
@@ -79,7 +80,10 @@ def upload():
 
                 print(len(lst))
             else:
-                return "Failed. SessionID has been token by earlier access. "
+                return jsonify({"code": 202, "msg": "Failed. SessionID has been token by earlier access. "})
+
+        else:
+            return jsonify({"code": 123, "msg": "Wrong file type"})
 
     return jsonify(engine.process_upload(lst))
 
@@ -93,7 +97,7 @@ def save(file, sessionID):
         dir = os.path.join(local_dir, sessionID)  # path for zip file
 
         temp = os.path.join(base_dir, filename)  # path for zip file
-        shutil.unpack_archive(filename=hh, extract_dir=dir)# unzip and save
+        shutil.unpack_archive(filename=temp, extract_dir=dir)# unzip and save
 
         os.remove(temp) # delete zip file
 
