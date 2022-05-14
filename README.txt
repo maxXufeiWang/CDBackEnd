@@ -8,28 +8,15 @@ Dependencies：
 		from werkzeug.utils import secure_filename
 
 		import shutil
-		import os
-	
-		import pymysql
-		import redis
 
 	This script using Flask, Flask_Session, and Werkzeug to handle web requests.
-	Also, Shutil and OS are used to handle file OS.
-
-	MySQL and Redis are used for zip file uploading.
-	Configuration:
-		Redis: 127.0.0.1:6379
-		MySQL: localhost:3306(self-defined username and password needed)
-
-	To change default config, you can find lines of code like below in "framework.py":
-		app.config['SESSION_REDIS'] = redis.Redis(host='127.0.0.1', port=6379)
-		db = pymysql.connect(host="localhost", user="root", db="maxWang", password="sinocbd", port=3306)
+	Also, Shutil are used to handle file OS.
 
 	# algEngine.py
 	## no new dependency
 
 	The actual computation happens in the following function:
-		def normalize_chance(self, chances)
+		def check_for_chance(self, libraries)
 
 Hot to run:
 	1. Make sure you installed all needed dependent libraries.
@@ -38,4 +25,13 @@ Hot to run:
 		 python server.py
 
 	then, the program should be running on http://localhost:8001/ 
-	Remember the IP and port.
+
+	You can try access this address in ur browser.
+	Once you see "Deployed", it means the backend is up and runnning.
+
+	Use "POST" for http://localhost:8001/file_upload.
+	The required parameters are:
+		1. sessionID: a unique ID for processing.
+		2. userUpload: where the github repo address, zip, txt, or single source code file resides.
+
+
