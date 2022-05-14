@@ -46,7 +46,7 @@ class algEngine(object):
 
     # function caller
     def process_upload(self, data):
-        libraries = self.extract_file_content(data)
+        libraries = data
         chances = self.check_for_chance(libraries)
         retBody = self.prepare_ret(chances)
 
