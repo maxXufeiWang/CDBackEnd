@@ -11,6 +11,7 @@ import shutil
 
 
 app = Flask(__name__)
+Session(app)
 
 engine = algEngine(".\\references")
 
