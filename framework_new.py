@@ -88,12 +88,14 @@ def save(file, sessionID):
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  # save zip
-        local_dir = os.path.join(base_dir, 'storage')  # create path for zip file
-        dir = os.path.join(local_dir, sessionID)
-        hh = os.path.join(base_dir, filename)  # path for zip file
+
+        local_dir = os.path.join(base_dir, 'storage')  
+        dir = os.path.join(local_dir, sessionID)  # path for zip file
+
+        temp = os.path.join(base_dir, filename)  # path for zip file
         shutil.unpack_archive(filename=hh, extract_dir=dir)# unzip and save
 
-        os.remove(hh) # delete zip file
+        os.remove(temp) # delete zip file
 
 
     return local_dir

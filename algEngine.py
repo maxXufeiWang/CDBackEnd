@@ -52,15 +52,6 @@ class algEngine(object):
 
         return retBody
 
-    # decode file and return the text contained in it
-    def extract_file_content(self, data):
-        data = str(data.decode()).splitlines()
-
-        data = data[4:]
-        data = data[:len(data) - 1]
-
-        return data
-
     # exclude the libraries that are not in our reference database
     # to avoid contamination
     def exclude_unrelated(self, libraries):
