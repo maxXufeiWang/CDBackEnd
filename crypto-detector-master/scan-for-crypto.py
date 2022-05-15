@@ -33,14 +33,15 @@ sys.argv = sys.argv[:len(sys.argv) - 1]
 
 if __name__ == '__main__':
     try:
+        print('Scaning.')
         log_output_directory = None
         options = Options(CryptoDetector.VERSION).read_all_options()
-        if "log" in options:
-            if options["log"]:
-                log_output_directory = options["output"]
+        #if "log" in options:
+            #if options["log"]:
+        #log_output_directory = options["output"]
         CryptoDetector(options).scan(sessionID)
 
-        print("done")
+        print('Successfully finished scaning process.\n')
 
     except CryptoDetectorError as expn:
         Output.print_error(str(expn))

@@ -22,8 +22,8 @@ def handle(files, data):
     return data
 
 
-def process(data):
-    source_dir = data['content'] + "\\" + data['sessionID'] + '.crypto'
+def process(data, base_dir):
+    source_dir = base_dir + "\\cryptoes\\" + data['sessionID'] + '.crypto'
 
     if data['type'] == 'string':
         command = 'python .\crypto-detector-master\scan-for-crypto.py -o cryptoes ' + \
@@ -73,8 +73,7 @@ def removeRedundancy(evidence):
 
 def readCrypto(source):
     encryptionLib = []
-    print(source)
-    with open('D:\gitProject\CDBackEnd\cryptoes\\22011121.crypto', 'rb') as filename:
+    with open(source, 'rb') as filename:
         data = json.load(filename)
 
         for SHA1_checksum in data['crypto_evidence']:

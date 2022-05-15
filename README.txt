@@ -21,7 +21,7 @@ Dependencies：
 Hot to run:
 	1. Make sure you installed all needed dependent libraries.
 
-	2. Open a console and in the root directory("FYP"), type this:
+	2. Open a console and in the root directory("CDBackEnd"), type this:
 		 python server.py
 
 	then, the program should be running on http://localhost:8001/ 

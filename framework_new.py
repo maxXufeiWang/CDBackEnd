@@ -25,6 +25,8 @@ def hello_world():
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
+    print('\n===================================================================================== \n')
+    print('New API calling initiated.')
     if request.method=='CONNECT':
         return "Stop"
     if request.method == "POST":
@@ -32,19 +34,14 @@ def upload():
 
         if data['type'] == 'string':
             if "https://github.com" not in data['content']:
+
+                print('Terminated with error.')
+                print('It is not a github repo address.')
+
                 return jsonify({"code": 100, "msg": "Failed. It is not a github repo address."})
 
-            lst = process(data)
-            deleteTempFiles(data['sessionID'])
-
-            print(len(lst))
-
-        
         elif data['type'] == 'application/zip':
             data['content'] = save(request.files.get('userUpload'), data['sessionID'])
-            lst = process(data)
-            deleteTempFiles(data['sessionID'])
-            print(len(lst))
 
         elif data['type'] == 'application/octet-stream':
             local_dir = os.path.join(base_dir, 'storage')
@@ -56,18 +53,16 @@ def upload():
                     f.write(content)
                     f.close()
                 data['content'] = dir
-                lst = process(data)
-                deleteTempFiles(data['sessionID'])
 
-                print(len(lst))
             else:
+                print('Terminated with error.')
+                print('SessionID has been token by earlier access.')
+
                 return jsonify({"code": 202, "msg": "Failed. SessionID has been token by earlier access. "})
 
         elif data['type'] == 'text/plain':
-            print("=============================123123")
             local_dir = os.path.join(base_dir, 'storage')
             dir = os.path.join(local_dir, data['sessionID'])
-            print(dir)
             if not os.path.exists(dir):
                 os.makedirs(dir) 
                 with open(dir + "/temp.txt", 'wb') as f:
@@ -75,15 +70,28 @@ def upload():
                     f.write(content)
                     f.close()
                 data['content'] = dir
-                lst = process(data)
-                deleteTempFiles(data['sessionID'])
 
-                print(len(lst))
             else:
+                print('Terminated with error.')
+                print('SessionID has been token by earlier access.')
+
                 return jsonify({"code": 202, "msg": "Failed. SessionID has been token by earlier access. "})
 
         else:
+            print('Terminated with error.')
+            print('Wrong file type')
+
             return jsonify({"code": 123, "msg": "Wrong file type"})
+
+        lst = process(data, base_dir)
+        deleteTempFiles(data['sessionID'])
+
+        
+        print('Found ', end='')
+        print(len(lst), end='')
+        print(' libraries.')
+
+    print('\n===================================================================================== \n')
 
     return jsonify(engine.process_upload(lst))
 
