@@ -18,7 +18,7 @@ Dependencies：
 	The actual computation happens in the following function:
 		def check_for_chance(self, libraries)
 
-Hot to run:
+How to run:
 	1. Make sure you installed all needed dependent libraries.
 
 	2. Open a console and in the root directory("CDBackEnd"), type this:
