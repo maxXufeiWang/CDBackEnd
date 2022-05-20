@@ -27,7 +27,8 @@ def hello_world():
 def download():
     print(request)
     data = request.form.to_dict()
-    sessionID = "22011121"
+    sessionID = data['sessionID']
+    #sessionID = "22011121"
     if os.path.exists('cryptoes\\' + sessionID + ".crypto"):
         try: 
             return send_from_directory('cryptoes\\', sessionID + ".crypto", as_attachment = True)
