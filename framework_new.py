@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, session, request
+from flask import Flask, jsonify, session, request, send_from_directory
 from flask_session import Session
 
 from werkzeug.utils import secure_filename
@@ -22,6 +22,17 @@ app.config['UPLOAD_FOLDER'] = base_dir
 @app.route('/')
 def hello_world():
     return 'Deployed.'
+
+@app.route('/download',methods=['GET'])
+def download():
+    print(request)
+    data = request.form.to_dict()
+    sessionID = "22011121"
+    if os.path.exists('cryptoes\\' + sessionID + ".crypto"):
+        try: 
+            return send_from_directory('cryptoes\\', sessionID + ".crypto", as_attachment = True)
+        except:
+            return jsonify({"code": 404, "msg": "Failed. No record found."})
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
@@ -84,6 +95,7 @@ def upload():
             return jsonify({"code": 123, "msg": "Wrong file type"})
 
         lst = process(data, base_dir)
+
         deleteTempFiles(data['sessionID'])
 
         
