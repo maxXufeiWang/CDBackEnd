@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, session, request, send_from_directory
+from flask import Flask, jsonify, session, request, send_file, send_from_directory
 from flask_session import Session
+from flask_cors import CORS
 
 from werkzeug.utils import secure_filename
 
@@ -8,11 +9,11 @@ from utility.deleteTempFiles import *
 from algEngine import *
 
 import shutil
-
+import pdfkit
 
 app = Flask(__name__)
 Session(app)
-
+CORS(app, supports_credentials=True)
 engine = algEngine(".\\references")
 
 base_dir  = os.path.abspath(os.path.dirname(__file__))
@@ -23,17 +24,43 @@ app.config['UPLOAD_FOLDER'] = base_dir
 def hello_world():
     return 'Deployed.'
 
-@app.route('/download',methods=['GET'])
+@app.route('/download',methods=['POST'])
 def download():
-    print(request)
-    data = request.form.to_dict()
-    sessionID = data['sessionID']
-    #sessionID = "22011121"
-    if os.path.exists('cryptoes\\' + sessionID + ".crypto"):
-        try: 
-            return send_from_directory('cryptoes\\', sessionID + ".crypto", as_attachment = True)
-        except:
-            return jsonify({"code": 404, "msg": "Failed. No record found."})
+    data = request.data.decode()
+    if "sessionID=" in data:
+        sessionID = data.split("sessionID=")[1]
+        if os.path.exists('txt\\' + sessionID + ".txt"):
+            print('txt\\' + sessionID + ".txt")
+            try: 
+                print("success")
+                return send_file('txt\\' + sessionID + ".txt", as_attachment = False)
+            except:
+                return jsonify({"code": 404, "msg": "Failed. No record found."})
+    else:
+        return jsonify({"code": 201, "msg": "No sessionID found"})
+
+@app.route('/downloadpdf',methods=['POST'])
+def downloadpdf():
+    data = request.data.decode()
+    if "sessionID=" in data:
+        sessionID = data.split("sessionID=")[1]
+        if os.path.exists('txt\\' + sessionID + ".txt"):
+            with open('txt\\' + sessionID + ".txt", 'r') as myfile:
+                data = myfile.read() 
+                print(data)
+                print(type(data))
+                path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+                config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+                pdfkit.from_string(data.encode('ascii', 'ignore').decode('ascii'), 'pdf\\' + sessionID + '.pdf', configuration=config)
+
+            try: 
+                print("correct")
+                return send_from_directory('pdf\\', sessionID + ".pdf", as_attachment = False)
+            except:
+                return jsonify({"code": 404, "msg": "Failed. No record found."})
+    else:
+        return jsonify({"code": 201, "msg": "No sessionID found"})
+
 
 @app.route('/file_upload',methods=['POST'])
 def upload():
@@ -97,6 +124,8 @@ def upload():
 
         lst = process(data, base_dir)
 
+        generateTXT(lst, data['sessionID'])
+
         deleteTempFiles(data['sessionID'])
 
         
@@ -124,6 +153,15 @@ def save(file, sessionID):
 
 
     return local_dir
+
+def generateTXT(lst, sessionID):
+    s = "Identified Libraries:\n\n"
+
+    for lib in lst:
+        s = s + lib + "\n"
+
+    with open('txt\\' + sessionID + ".txt", 'wt') as out:
+        print(s, file=out)
 
 if __name__ == '__main__':
     app.run()
