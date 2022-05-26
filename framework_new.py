@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = base_dir
 def hello_world():
     return 'Deployed.'
 
-@app.route('/download',methods=['POST'])
+@app.route('/download',methods=['GET'])
 def download():
     data = request.data.decode()
     if "sessionID=" in data:
@@ -39,7 +39,7 @@ def download():
     else:
         return jsonify({"code": 201, "msg": "No sessionID found"})
 
-@app.route('/downloadpdf',methods=['POST'])
+@app.route('/downloadpdf',methods=['GET'])
 def downloadpdf():
     data = request.data.decode()
     if "sessionID=" in data:

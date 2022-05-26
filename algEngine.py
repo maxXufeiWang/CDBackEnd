@@ -90,10 +90,8 @@ class algEngine(object):
 
     # Make the total = 100
     def normalize_chance(self, chances):
-        print(len(chances))
         if len(chances) > 3:
             chances = chances[0:3]
-        print(len(chances))
 
         total = 0
         for i in range(len(chances)):
