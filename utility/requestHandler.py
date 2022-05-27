@@ -1,6 +1,7 @@
 import os
 import json
 
+# Set up {type: filetype} for further process.
 def handle(files, data):
     if files == None:
         data['content'] = data['userUpload']
@@ -22,6 +23,8 @@ def handle(files, data):
     return data
 
 
+# Generate shell command to trigger crypto detector
+# A .crypto file be generated and stored inside ./cryptoes directory.
 def process(data, base_dir):
     source_dir = base_dir + "\\cryptoes\\" + data['sessionID'] + '.crypto'
 
@@ -51,6 +54,27 @@ def process(data, base_dir):
     return readCrypto(source_dir)
 
 
+# Read the content of generated .crypto file
+# Return a list of libraries inside .crypto
+def readCrypto(source):
+    encryptionLib = []
+    with open(source, 'rb') as filename:
+        data = json.load(filename)
+
+        for SHA1_checksum in data['crypto_evidence']:
+            for index in range(0, len(data['crypto_evidence'][SHA1_checksum]['hits'])):
+
+                encryption = data['crypto_evidence'][SHA1_checksum]['hits'][index]['matched_text']
+                evidence = data['crypto_evidence'][SHA1_checksum]['hits'][index]['evidence_type']
+                # if evidence == 'ethereum':
+                encryption = removeRedundancy(str(encryption))
+                if encryption.upper() not in encryptionLib:
+                    encryptionLib.append(encryption.upper())
+
+    return encryptionLib
+
+
+# Add evidence for accuracy.
 def removeRedundancy(evidence):
     if "_" == evidence[0]:
         evidence = ''+evidence[1:]
@@ -69,21 +93,3 @@ def removeRedundancy(evidence):
         return evidence
     else:
         return evidence
-
-
-def readCrypto(source):
-    encryptionLib = []
-    with open(source, 'rb') as filename:
-        data = json.load(filename)
-
-        for SHA1_checksum in data['crypto_evidence']:
-            for index in range(0, len(data['crypto_evidence'][SHA1_checksum]['hits'])):
-
-                encryption = data['crypto_evidence'][SHA1_checksum]['hits'][index]['matched_text']
-                evidence = data['crypto_evidence'][SHA1_checksum]['hits'][index]['evidence_type']
-                # if evidence == 'ethereum':
-                encryption = removeRedundancy(str(encryption))
-                if encryption.upper() not in encryptionLib:
-                    encryptionLib.append(encryption.upper())
-
-    return encryptionLib

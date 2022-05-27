@@ -1,6 +1,8 @@
 import os
 import shutil
 
+# Delete temp storage files inside ./storage
+# and temp .crypto file inside ./cryptoes
 def deleteTempFiles(sessionID):
     print("Clearing temp folders and files:")
     

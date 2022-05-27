@@ -6,6 +6,7 @@ class algEngine(object):
         fileNames = self.get_file_name(path)
         self.database = self.generate_db(path, fileNames)
 
+    # Getting everything insde reference foleder
     def get_file_name(self, path):
         import os
 
@@ -31,6 +32,7 @@ class algEngine(object):
 
         return db
     
+    # Extracting contents of files
     def extract_db_content(self, content):
         results = content.split( )
 
